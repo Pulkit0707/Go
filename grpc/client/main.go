@@ -18,8 +18,11 @@ func main(){
 	}
 	defer conn.Close()
 	client :=pb.NewGreetServiceClient(conn)
-	name := &pb.NamesList{
+	names := &pb.NamesList{
 		Names: []string{"Alice", "Bob", "Charlie"},
 	}
 	callSayHello(client)
+	callSayHelloServerStream(client,names)
+	callSayHelloClientStream(client,names)
+	callHelloBidirectionalStream(client,names)
 }

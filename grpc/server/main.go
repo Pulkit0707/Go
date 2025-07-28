@@ -4,7 +4,7 @@ import(
 	"net"
 	"log"
 	"google.golang.org/grpc"
-	pb "github.com/Pulkit0707/go/grpc/proto" // Adjust the import path as necessary
+	pb "github.com/Pulkit0707/go/grpc/proto" 
 )
 
 const (
