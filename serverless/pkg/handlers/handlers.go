@@ -9,3 +9,5 @@ func UpdateUser(){}
 func CreateUser(){}
 
 func DeleteUser(){}
+
+func UnhandledMethod()(){}
