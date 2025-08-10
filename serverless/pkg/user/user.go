@@ -134,7 +134,66 @@ func UpdateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName
 	return &u, nil
 }
 
-func DeleteUser(ctx context.Context,) error{
-	
+
+    // Marshal updated user fields into attribute values
+    av, err := attributevalue.MarshalMap(u)
+    if err != nil {
+        return nil, errors.New(ErrorCouldNotMarshalItem)
+    }
+
+    // Build UpdateExpression from av (excluding key)
+    updateExpr := "SET "
+    exprAttrValues := make(map[string]types.AttributeValue)
+    first := true
+    for k, v := range av {
+        if k == "email" { // skip primary key
+            continue
+        }
+        if !first {
+            updateExpr += ", "
+        }
+        updateExpr += fmt.Sprintf("%s = :%s", k, k)
+        exprAttrValues[":"+k] = v
+        first = false
+    }
+
+    // Create UpdateItemInput
+    input := &dynamodb.UpdateItemInput{
+        TableName: aws.String(tableName),
+        Key: map[string]types.AttributeValue{
+            "email": &types.AttributeValueMemberS{Value: u.Email},
+        },
+        UpdateExpression:          aws.String(updateExpr),
+        ExpressionAttributeValues: exprAttrValues,
+        ReturnValues:              types.ReturnValueAllNew,
+    }
+
+    _, err = dynaClient.UpdateItem(ctx, input)
+    if err != nil {
+        return nil, errors.New(ErrorCouldNotDynamoPutItem)
+    }
+
+    return &u, nil
+
+func DeleteUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client) error{
+	var u User
+	if err:=json.Unmarshal([]byte(req.Body),&u); err!=nil{
+		return errors.New(ErrorFailedToUnmarshalRecord)
+	}
+	currentUser,_:=FetchUser(ctx,u.Email,tableName,dynaClient)
+	if currentUser==nil{
+		return errors.New(ErrorUserDoesNotExist)
+	}
+	input := &dynamodb.DeleteItemInput{
+		TableName: aws.String(tableName),
+		Key: map[string]types.AttributeValue{
+			"email": &types.AttributeValueMemberS{Value: u.Email},
+		},
+	}
+	_, err:= dynaClient.DeleteItem(ctx,input)
+	if err!=nil{
+		return errors.New(ErrorCouldNotDeleteItem)
+	}
+	return nil
 }
 
