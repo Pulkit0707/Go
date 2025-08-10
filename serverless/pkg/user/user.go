@@ -107,7 +107,34 @@ func CreateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName
 	return &u, nil;
 }
 
-func UpdateUser(ctx context.Context,)(){}
+func UpdateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client)(*User, error){
+	var u User
+	if err:=json.Unmarshal([]byte(req.Body),&u); err!=nil{
+		return nil, errors.New(ErrorInvalidUserData)
+	}
+	if !validators.IsEmailValid(u.Email){
+		return nil, errors.New(ErrorInvalidEmail)
+	}
+	currentUser,_:=FetchUser(ctx,u.Email,tableName,dynaClient)
+	if currentUser==nil{
+		return nil, errors.New(ErrorUserDoesNotExist)
+	}
+	av,err:=attributevalue.MarshalMap(u)
+	if err!=nil{
+		return nil,errors.New(ErrorCouldNotMarshalItem)
+	}
+	input:=&dynaClient.UpdateItemInput{
+		Item: av,
+		TableName: aws.String(tableName),
+	}
+	_,err:=dynaClient.UpdateItem(ctx,input)
+	if err!=nil{
+		return nil, errors.New(ErrorCouldNotDynamoPutItem)
+	}
+	return &u, nil
+}
 
-func DeleteUser(ctx context.Context,) error{}
+func DeleteUser(ctx context.Context,) error{
+	
+}
 

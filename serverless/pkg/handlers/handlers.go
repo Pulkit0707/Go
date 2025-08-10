@@ -33,7 +33,7 @@ func GetUser(ctx context.Context, req events.APIGatewayProxyRequest, tableName s
     return apiResponse(http.StatusOK, res)
 }
 
-func UpdateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodb.Client)(*events.APIGatewayProxyResponse, error){
+func UpdateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client)(*events.APIGatewayProxyResponse, error){
 	res,err:=user.UpdateUser(ctx, req, tableName, dynaClient)
 	if err!=nil{
 		return apiResponse(http.StatusBadRequest, ErrorBody{aws.String(err.Error())})
@@ -41,7 +41,7 @@ func UpdateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName
 	return apiResponse(http.StatusOK, res)
 }
 
-func CreateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodb.Client)(*events.APIGatewayProxyResponse, error){
+func CreateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client)(*events.APIGatewayProxyResponse, error){
 	res,err:=user.CreateUser(ctx, req, tableName, dynaClient)
 	if err!=nil{
 		return apiResponse(http.StatusBadRequest, ErrorBody{aws.String(err.Error())})
@@ -49,7 +49,7 @@ func CreateUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName
 	return apiResponse(http.StatusOK, res)
 }
 
-func DeleteUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodb.Client)(*events.APIGatewayProxyResponse, error){
+func DeleteUser(ctx context.Context,req events.APIGatewayProxyRequest, tableName string, dynaClient *dynamodb.Client)(*events.APIGatewayProxyResponse, error){
 	err:=user.DeleteUser(ctx, req, tableName, dynaClient)
 	if err!=nil{
 		return apiResponse(http.StatusBadRequest, ErrorBody{aws.String(err.Error())})
