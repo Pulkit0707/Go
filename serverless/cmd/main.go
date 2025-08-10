@@ -33,7 +33,7 @@ func main() {
     lambda.Start(handler)
 }
 
-func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func handler(ctx context.Context, req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
     switch req.HTTPMethod {
     case "GET":
         return handlers.GetUser(ctx, req, tableName, dynaClient)
