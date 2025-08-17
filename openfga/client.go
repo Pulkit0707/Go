@@ -1,3 +1,5 @@
+// Connect to openfga
+
 package main
 
 import (
