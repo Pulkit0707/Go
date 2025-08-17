@@ -20,7 +20,7 @@ func main(){
 	fmt.Println("Created store", storeId)
 
 	// write model
-	WriteMoedl(ctx,client,storeId)
+	WriteModel(ctx,client,storeId)
 
 	// add relationship
 	WriteRelationship(ctx,client,storeId)
